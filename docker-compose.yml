@@ -1,0 +1,38 @@
+services:
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: evrly
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  n8n:
+    image: n8nio/n8n:latest
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    environment:
+      DB_TYPE: postgres
+      DB_POSTGRES_USER: user
+      DB_POSTGRES_PASSWORD: password
+      DB_POSTGRES_DB: evrly
+      DB_POSTGRES_HOST: postgres
+      DB_POSTGRES_PORT: 5432
+      N8N_PORT: 5678
+      N8N_HOST: localhost
+      N8N_PROTOCOL: http
+    ports:
+      - "5678:5678"
+    expose:
+      - "5678"
+    volumes:
+      - n8n_data:/home/node/.n8n
+
+volumes:
+  postgres_data:
+  n8n_data:
