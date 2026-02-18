@@ -44,3 +44,32 @@ services:
       N8N_PROTOCOL: 'http'
     volumes:
       - ./docker/n8n-data:/home/node/.n8n
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend
+    environment:
+      PORT: 3000
+      SOURCE_API_URL: ${SOURCE_API_URL:-https://n8n-apps.nlabshealth.com/webhook/data-5dYbrVSlMVJxfmco}
+      TARGET_API_URL: ${TARGET_API_URL:-http://n8n:5678}
+    ports:
+      - '3000:3000'
+    depends_on:
+      - n8n
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    environment:
+      PORT: 8080
+      API_URL: ${API_URL:-http://backend:3000}
+      N8N_URL: ${N8N_URL:-http://n8n:5678}
+    ports:
+      - '8080:8080'
+    depends_on:
+      - backend
+      - n8n
