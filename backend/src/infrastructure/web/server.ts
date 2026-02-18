@@ -12,7 +12,7 @@ const populateUsers = new PopulateUsers(
   new UserTargetToN8N(),
 );
 
-app.get("/users", async (_req: Request, res: Response) => {
+app.post("/users", async (_req: Request, res: Response) => {
   try {
     const result = await populateUsers.execute();
     res.json(result);
