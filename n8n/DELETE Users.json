@@ -1,0 +1,96 @@
+{
+  "name": "DELETE Users",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "DELETE",
+        "path": "users",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -320,
+        -96
+      ],
+      "id": "65b200f3-14e3-4c29-9c44-f93d6ccfa688",
+      "name": "Webhook",
+      "webhookId": "35f89813-7193-4777-b454-62a804e9f3a5"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "TRUNCATE TABLE evrly_users RESTART IDENTITY;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -128,
+        -96
+      ],
+      "id": "f3a0f5d2-f8a4-4287-b705-be1c279aca7b",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "postgres": {
+          "id": "eQpL9XBHNJoGFODu",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        64,
+        -96
+      ],
+      "id": "29992bcb-fa0f-4a96-a79d-c17563de34dc",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "21aa1bb3-bd1f-48de-9b72-b4577b95fa9f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e633460ada9ee5e1ac6c551d97439d43c497ca77cc92b7e7b18da48a52459918"
+  },
+  "id": "PdO68WYxT4MoXzKj",
+  "tags": []
+}

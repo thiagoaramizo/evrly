@@ -1,0 +1,254 @@
+{
+  "name": "POST Users",
+  "nodes": [
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "evrly_users",
+          "mode": "list",
+          "cachedResultName": "evrly_users"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $json.id }}",
+            "nome": "={{ $json.nome }}",
+            "email": "={{ $json.email }}",
+            "phone": "={{ $json.phone }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": true,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "nome",
+              "displayName": "nome",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "skipOnConflict": true
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -32,
+        -224
+      ],
+      "id": "286abfa2-6d09-4d58-93d0-8d58e59089cd",
+      "name": "Insert rows in a table",
+      "credentials": {
+        "postgres": {
+          "id": "eQpL9XBHNJoGFODu",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "=body.users",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -192,
+        -224
+      ],
+      "id": "c2fc23ef-f9fa-4a21-b81f-3e6b87caab33",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "users",
+        "responseMode": "responseNode",
+        "options": {
+          "rawBody": false
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -368,
+        -224
+      ],
+      "id": "12717c87-26c7-48f4-983d-8536685e53f5",
+      "name": "POST",
+      "webhookId": "2172641b-238d-4684-aee0-a62132d215cc"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "users",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        128,
+        -224
+      ],
+      "id": "e8bdd2d6-57a6-4740-a2a9-605e48efe90e",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseCode": 201
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        288,
+        -224
+      ],
+      "id": "74085413-6e56-44e6-aaf8-af890e9bbb51",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {
+    "POST": [
+      {
+        "json": {
+          "headers": {
+            "user-agent": "vscode-restclient",
+            "content-type": "application/json",
+            "content-length": "230",
+            "accept-encoding": "gzip, deflate, br",
+            "cookie": "JSESSIONID=932F164B222400C53DCC6B22397DEB69",
+            "host": "localhost:5678",
+            "connection": "close"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "users": [
+              {
+                "id": 1,
+                "nome": "Thiago Aramizo",
+                "email": "thiago.aramizo@evrly.com",
+                "phone": "1234567890"
+              },
+              {
+                "id": 2,
+                "nome": "João Silva",
+                "email": "joao.silva@evrly.com",
+                "phone": "9876543210"
+              }
+            ]
+          },
+          "webhookUrl": "http://localhost:5678/webhook-test/users",
+          "executionMode": "test"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Insert rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert rows in a table": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "POST": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "dc281825-d7d9-4f7e-9ed6-06ffe8e0b691",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e633460ada9ee5e1ac6c551d97439d43c497ca77cc92b7e7b18da48a52459918"
+  },
+  "id": "etOIQYaTI3RZuEkp",
+  "tags": []
+}

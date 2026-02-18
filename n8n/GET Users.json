@@ -1,0 +1,145 @@
+{
+  "name": "GET Users",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "users",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -144,
+        -64
+      ],
+      "id": "2fa14442-125f-4f43-962d-9e48267b2789",
+      "name": "Webhook",
+      "webhookId": "b4c96d11-a528-4db2-a483-71e1c4a55eca"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "evrly_users",
+          "mode": "list",
+          "cachedResultName": "evrly_users"
+        },
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        32,
+        -64
+      ],
+      "id": "f35c85eb-6fd8-4a42-b6b0-73a0ab16e6aa",
+      "name": "Select rows from a table",
+      "credentials": {
+        "postgres": {
+          "id": "eQpL9XBHNJoGFODu",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "users",
+        "options": {
+          "includeBinaries": false
+        }
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        192,
+        -64
+      ],
+      "id": "c20ec258-8516-4e51-bd2c-97409b969971",
+      "name": "Aggregate",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        336,
+        -64
+      ],
+      "id": "deabc4af-c0c9-4864-909e-d66a652fb1aa",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Select rows from a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select rows from a table": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "93d0dce2-c3ed-42a6-9fc3-a56c2c764039",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e633460ada9ee5e1ac6c551d97439d43c497ca77cc92b7e7b18da48a52459918"
+  },
+  "id": "9EaILRq2p5opZWWh",
+  "tags": []
+}
